@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 
@@ -19,7 +18,7 @@ class SupabaseAuthService
         $this->serviceKey = config('services.supabase.service_key');
     }
 
-    public function login(string $email, string $password): ?User
+    public function login(string $email, string $password): ?array
     {
         $response = Http::withHeaders([
             'apikey' => $this->anonKey,
@@ -38,25 +37,21 @@ class SupabaseAuthService
         Session::put('supabase_access_token', $authData['access_token']);
         Session::put('supabase_refresh_token', $authData['refresh_token']);
 
-        $user = User::where('email', $email)->first();
+        $metadata = $authData['user']['user_metadata'] ?? [];
+        $userData = [
+            'id' => $authData['user']['id'] ?? null,
+            'nombre' => $metadata['full_name'] ?? $email,
+            'email' => $email,
+            'rol' => $metadata['rol'] ?? 'administrador',
+            'activo' => true,
+        ];
 
-        if (!$user) {
-            $metadata = $authData['user']['user_metadata'] ?? [];
-            $user = User::create([
-                'nombre' => $metadata['full_name'] ?? $email,
-                'email' => $email,
-                'password' => '',
-                'rol' => $metadata['rol'] ?? 'administrador',
-                'activo' => true,
-            ]);
-        }
+        $this->setUserSession($userData);
 
-        $this->setUserSession($user);
-
-        return $user;
+        return $userData;
     }
 
-    public function register(string $nombre, string $email, string $password, string $rol): ?User
+    public function register(string $nombre, string $email, string $password, string $rol): ?array
     {
         $response = Http::withHeaders([
             'apikey' => $this->serviceKey,
@@ -76,15 +71,16 @@ class SupabaseAuthService
             return null;
         }
 
-        $user = User::create([
+        $responseData = $response->json();
+        $userData = [
+            'id' => $responseData['user']['id'] ?? null,
             'nombre' => $nombre,
             'email' => $email,
-            'password' => '',
             'rol' => $rol,
             'activo' => true,
-        ]);
+        ];
 
-        return $user;
+        return $userData;
     }
 
     public function logout(): void
@@ -103,13 +99,13 @@ class SupabaseAuthService
         return Session::get('supabase_user');
     }
 
-    private function setUserSession(User $user): void
+    private function setUserSession(array $userData): void
     {
         Session::put('supabase_user', [
-            'id' => $user->id,
-            'nombre' => $user->nombre,
-            'email' => $user->email,
-            'rol' => $user->rol,
+            'id' => $userData['id'],
+            'nombre' => $userData['nombre'],
+            'email' => $userData['email'],
+            'rol' => $userData['rol'],
         ]);
     }
 }
