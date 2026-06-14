@@ -1,8 +1,8 @@
 <?php
 
 foreach ($_SERVER as $key => $value) {
-    if (is_string($value) && !getenv($key)) {
-        putenv("$key=$value");
+    if (is_string($value)) {
+        putenv("$key=" . trim($value));
     }
 }
 
