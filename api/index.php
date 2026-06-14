@@ -2,7 +2,10 @@
 
 foreach ($_SERVER as $key => $value) {
     if (is_string($value)) {
-        putenv("$key=" . trim($value));
+        $trimmed = trim($value);
+        $_SERVER[$key] = $trimmed;
+        $_ENV[$key] = $trimmed;
+        putenv("$key=$trimmed");
     }
 }
 
