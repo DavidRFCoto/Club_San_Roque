@@ -38,9 +38,6 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 
 RUN a2enmod rewrite
 
-RUN echo "PassEnv APP_ENV APP_DEBUG APP_KEY APP_URL DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD SUPABASE_URL SUPABASE_ANON_KEY SUPABASE_SERVICE_KEY SESSION_DRIVER CACHE_DRIVER LOG_CHANNEL LOG_LEVEL" > /etc/apache2/conf-available/pass-env.conf \
-    && a2enconf pass-env
-
 RUN echo "php_flag display_errors Off" >> /etc/apache2/conf-available/docker-php.conf \
     && echo "php_flag log_errors On" >> /etc/apache2/conf-available/docker-php.conf \
     && echo "php_value error_log /dev/stderr" >> /etc/apache2/conf-available/docker-php.conf
