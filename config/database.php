@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => ($v = getenv('DB_CONNECTION')) !== false ? trim($v) : env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'sqlite'),
 
     /*
     |--------------------------------------------------------------------------
@@ -86,12 +86,12 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL'),
-            'host' => ($v = getenv('DB_HOST')) !== false ? trim($v) : env('DB_HOST', '127.0.0.1'),
-            'port' => ($v = getenv('DB_PORT')) !== false ? trim($v) : env('DB_PORT', '5432'),
-            'database' => ($v = getenv('DB_DATABASE')) !== false ? trim($v) : env('DB_DATABASE', 'laravel'),
-            'username' => ($v = getenv('DB_USERNAME')) !== false ? trim($v) : env('DB_USERNAME', 'root'),
-            'password' => ($v = getenv('DB_PASSWORD')) !== false ? trim($v) : env('DB_PASSWORD', ''),
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'laravel'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,

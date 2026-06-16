@@ -27,6 +27,7 @@ echo "DB_PORT=${DB_PORT:-5432}" >> /var/www/html/.env
 echo "DB_DATABASE=${DB_DATABASE:-postgres}" >> /var/www/html/.env
 echo "DB_USERNAME=${DB_USERNAME}" >> /var/www/html/.env
 printf 'DB_PASSWORD=%s\n' "$DB_PASSWORD" >> /var/www/html/.env
+echo "DB_SSLMODE=require" >> /var/www/html/.env
 echo "SUPABASE_URL=${SUPABASE_URL}" >> /var/www/html/.env
 echo "SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}" >> /var/www/html/.env
 echo "SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}" >> /var/www/html/.env

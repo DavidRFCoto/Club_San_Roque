@@ -8,6 +8,31 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
+Route::get('/debug-db', function () {
+    return response()->json([
+        'db_connection' => config('database.default'),
+        'db_host' => config('database.connections.pgsql.host'),
+        'db_port' => config('database.connections.pgsql.port'),
+        'db_database' => config('database.connections.pgsql.database'),
+        'db_username' => config('database.connections.pgsql.username'),
+        'db_password_set' => !empty(config('database.connections.pgsql.password')),
+        'db_sslmode' => config('database.connections.pgsql.sslmode'),
+    ]);
+});
+
+Route::get('/debug-db', function () {
+    return response()->json([
+        'db_connection' => config('database.default'),
+        'db_host' => config('database.connections.pgsql.host'),
+        'db_port' => config('database.connections.pgsql.port'),
+        'db_database' => config('database.connections.pgsql.database'),
+        'db_username' => config('database.connections.pgsql.username'),
+        'db_password_set' => !empty(config('database.connections.pgsql.password')),
+        'env_db_username' => getenv('DB_USERNAME'),
+        'env_db_password_set' => !empty(getenv('DB_PASSWORD')),
+    ]);
+});
+
 Route::get('/login', [SupabaseAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [SupabaseAuthController::class, 'login']);
 Route::post('/logout', [SupabaseAuthController::class, 'logout'])->name('logout');
