@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 echo "=== Iniciando despliegue ==="
 
@@ -10,10 +9,8 @@ fi
 
 echo "APP_KEY detectada: ${APP_KEY:0:20}..."
 echo "SUPABASE_URL: ${SUPABASE_URL}"
-echo "SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:0:15}..."
 echo "DB_HOST: ${DB_HOST}"
 echo "DB_USERNAME: ${DB_USERNAME}"
-echo "DB_PORT: ${DB_PORT:-5432}"
 
 cat > /etc/apache2/conf-available/laravel-env.conf << EOF
 SetEnv APP_ENV "${APP_ENV:-production}"
@@ -39,10 +36,8 @@ a2enconf laravel-env
 
 echo "Variables configuradas en Apache"
 
-if [ "$DB_CONNECTION" = "pgsql" ] && [ -n "$DB_HOST" ]; then
-    echo "Ejecutando migraciones..."
-    php artisan migrate --force --no-interaction || echo "Warning: Migraciones fallaron, continuando..."
-fi
+echo "Ejecutando migraciones..."
+php artisan migrate --force --no-interaction 2>&1 || echo "Warning: Migraciones fallaron, continuando..."
 
 echo "Limpiando cache..."
 php artisan config:clear

@@ -20,25 +20,12 @@ class SupabaseAuthService
 
     public function login(string $email, string $password): ?array
     {
-        $url = "{$this->supabaseUrl}/auth/v1/token?grant_type=password";
-
-        \Illuminate\Support\Facades\Log::info('Supabase login attempt', [
-            'url' => $this->supabaseUrl,
-            'anon_key_set' => !empty($this->anonKey),
-            'anon_key_length' => strlen($this->anonKey ?? ''),
-        ]);
-
         $response = Http::withHeaders([
             'apikey' => $this->anonKey,
             'Content-Type' => 'application/json',
-        ])->post($url, [
+        ])->post("{$this->supabaseUrl}/auth/v1/token?grant_type=password", [
             'email' => $email,
             'password' => $password,
-        ]);
-
-        \Illuminate\Support\Facades\Log::info('Supabase login response', [
-            'status' => $response->status(),
-            'body' => $response->body(),
         ]);
 
         if (!$response->successful()) {
