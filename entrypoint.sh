@@ -9,6 +9,11 @@ if [ -z "$APP_KEY" ]; then
 fi
 
 echo "APP_KEY detectada: ${APP_KEY:0:20}..."
+echo "SUPABASE_URL: ${SUPABASE_URL}"
+echo "SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:0:15}..."
+echo "DB_HOST: ${DB_HOST}"
+echo "DB_USERNAME: ${DB_USERNAME}"
+echo "DB_PORT: ${DB_PORT:-5432}"
 
 cat > /etc/apache2/conf-available/laravel-env.conf << EOF
 SetEnv APP_ENV "${APP_ENV:-production}"
