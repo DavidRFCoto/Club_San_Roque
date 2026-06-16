@@ -8,6 +8,35 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
+Route::get('/run-migrations', function () {
+    try {
+        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true], $output);
+        return response()->json([
+            'status' => 'ok',
+            'output' => $output->fetch(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
+
+Route::get('/check-tables', function () {
+    try {
+        $tables = \Illuminate\Support\Facades\DB::select("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
+        return response()->json([
+            'tables' => array_map(fn($t) => $t->table_name, $tables),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+});
+
 Route::get('/debug-db', function () {
     return response()->json([
         'db_connection' => config('database.default'),
