@@ -10,32 +10,33 @@ fi
 echo "APP_KEY detectada: ${APP_KEY:0:20}..."
 echo "DB_HOST: ${DB_HOST}"
 echo "DB_USERNAME: [${DB_USERNAME}]"
-echo "DB_PASSWORD: [${DB_PASSWORD:0:5}...]"
+echo "DB_PASSWORD length: ${#DB_PASSWORD}"
 echo "DB_PORT: ${DB_PORT:-5432}"
 echo "DB_DATABASE: ${DB_DATABASE}"
 
-cat > /var/www/html/.env << ENVEOF
-APP_ENV=${APP_ENV:-production}
-APP_DEBUG=${APP_DEBUG:-false}
-APP_KEY=${APP_KEY}
-APP_URL=${APP_URL:-http://localhost}
-DB_CONNECTION=${DB_CONNECTION:-pgsql}
-DB_HOST=${DB_HOST}
-DB_PORT=${DB_PORT:-5432}
-DB_DATABASE=${DB_DATABASE:-postgres}
-DB_USERNAME=${DB_USERNAME}
-DB_PASSWORD=${DB_PASSWORD}
-SUPABASE_URL=${SUPABASE_URL}
-SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
-SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
-SESSION_DRIVER=${SESSION_DRIVER:-cookie}
-CACHE_DRIVER=${CACHE_DRIVER:-file}
-LOG_CHANNEL=${LOG_CHANNEL:-stderr}
-LOG_LEVEL=${LOG_LEVEL:-error}
+cat > /var/www/html/.env << 'ENVEOF'
+APP_ENV=production
+APP_DEBUG=false
 ENVEOF
 
+echo "APP_KEY=${APP_KEY}" >> /var/www/html/.env
+echo "APP_URL=${APP_URL:-http://localhost}" >> /var/www/html/.env
+echo "DB_CONNECTION=${DB_CONNECTION:-pgsql}" >> /var/www/html/.env
+echo "DB_HOST=${DB_HOST}" >> /var/www/html/.env
+echo "DB_PORT=${DB_PORT:-5432}" >> /var/www/html/.env
+echo "DB_DATABASE=${DB_DATABASE:-postgres}" >> /var/www/html/.env
+echo "DB_USERNAME=${DB_USERNAME}" >> /var/www/html/.env
+printf 'DB_PASSWORD=%s\n' "$DB_PASSWORD" >> /var/www/html/.env
+echo "SUPABASE_URL=${SUPABASE_URL}" >> /var/www/html/.env
+echo "SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}" >> /var/www/html/.env
+echo "SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}" >> /var/www/html/.env
+echo "SESSION_DRIVER=${SESSION_DRIVER:-cookie}" >> /var/www/html/.env
+echo "CACHE_DRIVER=${CACHE_DRIVER:-file}" >> /var/www/html/.env
+echo "LOG_CHANNEL=${LOG_CHANNEL:-stderr}" >> /var/www/html/.env
+echo "LOG_LEVEL=${LOG_LEVEL:-error}" >> /var/www/html/.env
+
 echo ".env generado:"
-cat /var/www/html/.env
+grep -v 'PASSWORD\|KEY' /var/www/html/.env
 echo "---"
 
 echo "Ejecutando migraciones..."
