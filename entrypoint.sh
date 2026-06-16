@@ -8,33 +8,35 @@ if [ -z "$APP_KEY" ]; then
 fi
 
 echo "APP_KEY detectada: ${APP_KEY:0:20}..."
-echo "SUPABASE_URL: ${SUPABASE_URL}"
 echo "DB_HOST: ${DB_HOST}"
-echo "DB_USERNAME: ${DB_USERNAME}"
+echo "DB_USERNAME: [${DB_USERNAME}]"
+echo "DB_PASSWORD: [${DB_PASSWORD:0:5}...]"
+echo "DB_PORT: ${DB_PORT:-5432}"
+echo "DB_DATABASE: ${DB_DATABASE}"
 
-cat > /etc/apache2/conf-available/laravel-env.conf << EOF
-SetEnv APP_ENV "${APP_ENV:-production}"
-SetEnv APP_DEBUG "${APP_DEBUG:-false}"
-SetEnv APP_KEY "${APP_KEY}"
-SetEnv APP_URL "${APP_URL:-http://localhost}"
-SetEnv DB_CONNECTION "${DB_CONNECTION:-pgsql}"
-SetEnv DB_HOST "${DB_HOST}"
-SetEnv DB_PORT "${DB_PORT:-5432}"
-SetEnv DB_DATABASE "${DB_DATABASE:-postgres}"
-SetEnv DB_USERNAME "${DB_USERNAME}"
-SetEnv DB_PASSWORD "${DB_PASSWORD}"
-SetEnv SUPABASE_URL "${SUPABASE_URL}"
-SetEnv SUPABASE_ANON_KEY "${SUPABASE_ANON_KEY}"
-SetEnv SUPABASE_SERVICE_KEY "${SUPABASE_SERVICE_KEY}"
-SetEnv SESSION_DRIVER "${SESSION_DRIVER:-cookie}"
-SetEnv CACHE_DRIVER "${CACHE_DRIVER:-file}"
-SetEnv LOG_CHANNEL "${LOG_CHANNEL:-stderr}"
-SetEnv LOG_LEVEL "${LOG_LEVEL:-error}"
-EOF
+cat > /var/www/html/.env << ENVEOF
+APP_ENV=${APP_ENV:-production}
+APP_DEBUG=${APP_DEBUG:-false}
+APP_KEY=${APP_KEY}
+APP_URL=${APP_URL:-http://localhost}
+DB_CONNECTION=${DB_CONNECTION:-pgsql}
+DB_HOST=${DB_HOST}
+DB_PORT=${DB_PORT:-5432}
+DB_DATABASE=${DB_DATABASE:-postgres}
+DB_USERNAME=${DB_USERNAME}
+DB_PASSWORD=${DB_PASSWORD}
+SUPABASE_URL=${SUPABASE_URL}
+SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+SESSION_DRIVER=${SESSION_DRIVER:-cookie}
+CACHE_DRIVER=${CACHE_DRIVER:-file}
+LOG_CHANNEL=${LOG_CHANNEL:-stderr}
+LOG_LEVEL=${LOG_LEVEL:-error}
+ENVEOF
 
-a2enconf laravel-env
-
-echo "Variables configuradas en Apache"
+echo ".env generado:"
+cat /var/www/html/.env
+echo "---"
 
 echo "Ejecutando migraciones..."
 php artisan migrate --force --no-interaction 2>&1 || echo "Warning: Migraciones fallaron, continuando..."
