@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: club-san-roque
+    env: php
+    region: frankfurt
+    plan: free
+    branch: main
+    buildCommand: composer install --no-dev --optimize-autoloader && npm install && npm run build
+    startCommand: vendor/bin/heroku-php-apache2 public/
+    healthCheckPath: /login
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        value: base64:6mF++eb4JvA3L0/WOEtFoRK1B3KL1ZnNpKn8AuhLu08=
+      - key: APP_URL
+        sync: false
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_DATABASE
+        value: postgres
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_DRIVER
+        value: file
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
